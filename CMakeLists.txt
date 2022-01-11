@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.4.1)
 
+set(CMAKE_SYSTEM_NAME Android)
 message("Checking CMAKE_SYSTEM_NAME = '${CMAKE_SYSTEM_NAME}'")
+message("Checking CMAKE_ANDROID_ARCH_ABI = '${CMAKE_ANDROID_ARCH_ABI}'")
+
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   add_definitions(-DOS_OSX)
 elseif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -14,7 +17,7 @@ else()
   message("OS not detected.")
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 ## Define each subfolders
 set(JNI_DETECTION_INCLUDE jni/jni_detections)

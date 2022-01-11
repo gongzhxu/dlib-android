@@ -59,6 +59,8 @@ def parse_args():
     parser.add_argument('--debug', action='store_true',
                         help='Enable debug build')
 
+    parser.add_argument('--ndk', action='store_true',
+                        help='use ndk build or cmake')
     args = parser.parse_args()
     return args
 
@@ -156,8 +158,7 @@ def copySoToAS(src, dst):
                 abis = os.path.basename(os.path.dirname(path))
                 shutil.copy(path, os.path.join(dst, abis))
 
-# TODO : Refactor
-def test_cmake():
+def cmake_build():
     curr = os.getcwd()
     buildFolder = 'build'
     if os.path.exists(buildFolder):
@@ -169,10 +170,9 @@ def test_cmake():
     build_cmd = ['make']
     ABI = 'arm64-v8a'
     # ABI = 'x86'
-    # TODO
-    NDK_PATH = '/home/darrenl/tools/android-ndk-r10e'
+    NDK_PATH = os.environ.get('ANDROID_NDK_HOME')
     cmake_cmd = cmake_cmd + ['-DCMAKE_SYSTEM_NAME=Android', '-DCMAKE_SYSTEM_VERSION=21',
-                                '-DCMAKE_ANDROID_ARCH_ABI=' + ABI, '-DCMAKE_ANDROID_STL_TYPE=gnustl_static',
+                                '-DCMAKE_ANDROID_ARCH_ABI=' + ABI, '-DCMAKE_ANDROID_STL_TYPE=c++_static',
                                 '-DCMAKE_ANDROID_NDK=' + NDK_PATH]
     cmake_cmd = cmake_cmd + ['-D', 'CMAKE_INSTALL_PREFIX=.']
     cmake_cmd = cmake_cmd + ['..']
@@ -204,8 +204,11 @@ if __name__ == '__main__':
 
     if args.clean:
         ndk_clean()
-    else:
+
+    if args.ndk:
         ndk_build(args)
+    else:
+        cmake_build()
 
     if args.android_project and os.path.exists(args.android_project):
         srcFolder = os.path.join('libs')
